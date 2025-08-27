@@ -1,0 +1,87 @@
+<!doctype html>
+<html lang="en">
+<head>
+  <meta charset="utf-8">
+  <meta name="viewport" content="width=device-width,initial-scale=1">
+  <title>Ganesh Puja Wishes</title>
+  <style>
+    body,html{margin:0;padding:0;height:100%;font-family:Inter,Arial,sans-serif;background:#0f172a;color:#fff;overflow:hidden}
+    .door{position:fixed;top:0;left:0;width:100%;height:100%;display:flex;align-items:center;justify-content:center;background:#0f172a;z-index:1000;flex-direction:column;transition:transform 1.5s ease-in-out}
+    .door.hidden{transform:translateY(-100%)}
+    .door h1{font-size:28px;margin-bottom:20px;color:#fbbf24;animation:glow 1.5s infinite alternate}
+    @keyframes glow{from{color:#fbbf24;}to{color:#f59e0b;}}
+    .door button{padding:12px 20px;font-size:16px;font-weight:600;border:none;border-radius:10px;background:#fbbf24;color:#0f172a;cursor:pointer;box-shadow:0 4px 14px rgba(251,191,36,0.3)}
+
+    .main{position:absolute;top:0;left:0;width:100%;height:100%;display:none;flex-direction:column;align-items:center;justify-content:center;text-align:center;padding:20px;box-sizing:border-box;overflow:auto}
+    .main.active{display:flex;animation:fadeIn 1.2s ease-in-out}
+    @keyframes fadeIn{from{opacity:0;}to{opacity:1;}}
+
+    .ganesh-img{max-width:240px;width:80%;border-radius:16px;box-shadow:0 8px 30px rgba(0,0,0,0.6);margin-bottom:20px}
+    .wish-text{font-size:20px;line-height:1.4;margin:10px 0;color:#fef9c3}
+    .friend-name{font-weight:700;color:#fbbf24;font-size:22px}
+    input[type=text]{padding:10px;width:80%;max-width:300px;border-radius:10px;border:none;margin:15px 0;font-size:16px}
+    .btn{padding:12px 20px;border:none;border-radius:10px;background:#f59e0b;color:#0f172a;font-weight:600;cursor:pointer;box-shadow:0 4px 14px rgba(251,191,36,0.3)}
+    .btn.share{margin-top:10px}
+
+    audio{display:none}
+  </style>
+</head>
+<body>
+  <!-- Door intro -->
+  <div class="door" id="door">
+    <h1>🎉 Surprise for You 🎉</h1>
+    <button id="openBtn">Click Here to Open</button>
+  </div>
+
+  <!-- Main content -->
+  <div class="main" id="mainContent">
+    <img src="https://upload.wikimedia.org/wikipedia/commons/5/50/Ganesh_chaturthi.jpeg" alt="Lord Ganesh" class="ganesh-img">
+    <div class="wish-text">🙏 Wishing you a blessed <span style="color:#fb923c">Ganesh Puja</span> filled with joy and prosperity!</div>
+    <div class="wish-text">From your friend: <span class="friend-name" id="friendName">Someone Special</span></div>
+
+    <input type="text" id="yourName" placeholder="Enter your name">
+    <button class="btn share" id="shareBtn">Send & Share</button>
+  </div>
+
+  <!-- Music -->
+  <audio id="bgMusic" loop>
+    <source src="https://www.bensound.com/bensound-music/bensound-sunny.mp3" type="audio/mpeg">
+  </audio>
+
+<script>
+  const door=document.getElementById('door');
+  const main=document.getElementById('mainContent');
+  const openBtn=document.getElementById('openBtn');
+  const bgMusic=document.getElementById('bgMusic');
+  const friendName=document.getElementById('friendName');
+  const shareBtn=document.getElementById('shareBtn');
+  const yourName=document.getElementById('yourName');
+
+  // read URL params
+  const params=new URLSearchParams(window.location.search);
+  if(params.get('from')){
+    friendName.textContent=decodeURIComponent(params.get('from'));
+  }
+
+  openBtn.addEventListener('click',()=>{
+    door.classList.add('hidden');
+    setTimeout(()=>{
+      main.classList.add('active');
+      bgMusic.play().catch(()=>{});
+    },1200);
+  });
+
+  shareBtn.addEventListener('click',()=>{
+    const name=yourName.value.trim();
+    if(!name){alert('Please enter your name');return;}
+    const shareUrl=window.location.origin+window.location.pathname+"?from="+encodeURIComponent(name);
+    if(navigator.share){
+      navigator.share({title:"Ganesh Puja Wish",text:"Blessings from "+name,url:shareUrl});
+    }else{
+      navigator.clipboard.writeText(shareUrl);
+      alert('Link copied! Share it with friends.');
+    }
+  });
+</script>
+</body>
+</html>
